@@ -3,6 +3,7 @@ package com.arkflame.flamepearls.hooks;
 import com.arkflame.flamepearls.FlamePearls;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * PlaceholderAPI hook for FlamePearls plugin.
@@ -28,7 +29,7 @@ public class FlamePearlsPlaceholderHook extends PlaceholderExpansion {
      * The unique identifier for your placeholders (without the % signs).
      */
     @Override
-    public String getIdentifier() {
+    public @NotNull String getIdentifier() {
         return "flamepearls";
     }
 
@@ -36,7 +37,7 @@ public class FlamePearlsPlaceholderHook extends PlaceholderExpansion {
      * The author of this expansion.
      */
     @Override
-    public String getAuthor() {
+    public @NotNull String getAuthor() {
         return String.join(", ", plugin.getDescription().getAuthors());
     }
 
@@ -44,7 +45,7 @@ public class FlamePearlsPlaceholderHook extends PlaceholderExpansion {
      * The version of this expansion.
      */
     @Override
-    public String getVersion() {
+    public @NotNull String getVersion() {
         return plugin.getDescription().getVersion();
     }
 
@@ -58,11 +59,9 @@ public class FlamePearlsPlaceholderHook extends PlaceholderExpansion {
      */
     @Override
     public String onPlaceholderRequest(Player player, String params) {
-        switch (params.toLowerCase()) {
-            case "cooldown":
-                return FlamePearls.getInstance().getCooldownManager().getFancyCooldown(player);
-            default:
-                return "0";
+        if (params.equalsIgnoreCase("cooldown")) {
+            return FlamePearls.getInstance().getCooldownManager().getFancyCooldown(player);
         }
+        return "0";
     }
 }

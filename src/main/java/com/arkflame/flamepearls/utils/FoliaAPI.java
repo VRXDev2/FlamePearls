@@ -16,12 +16,13 @@ import org.bukkit.scheduler.BukkitScheduler;
 import com.arkflame.flamepearls.FlamePearls;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 
+@SuppressWarnings({"CallToPrintStackTrace", "unused"})
 public class FoliaAPI {
-    private static Map<String, Method> cachedMethods = new HashMap<>(); // cached reflection methods
-    private static BukkitScheduler bS = Bukkit.getScheduler(); // bukkit scheduler
-    private static Object globalRegionScheduler = getGlobalRegionScheduler(); // folia global scheduler
-    private static Object regionScheduler = getRegionScheduler(); // folia region scheduler
-    private static Object asyncScheduler = getAsyncScheduler(); // folia async scheduler
+    private static final Map<String, Method> cachedMethods = new HashMap<>(); // cached reflection methods
+    private static final BukkitScheduler bS = Bukkit.getScheduler(); // bukkit scheduler
+    private static final Object globalRegionScheduler = getGlobalRegionScheduler(); // folia global scheduler
+    private static final Object regionScheduler = getRegionScheduler(); // folia region scheduler
+    private static final Object asyncScheduler = getAsyncScheduler(); // folia async scheduler
 
     // FIX 1: cache isFolia() result at init time instead of re-checking every call
     private static final boolean IS_FOLIA = detectFolia();
@@ -72,7 +73,7 @@ public class FoliaAPI {
             // FIX 3: cache entityScheduler.execute and entityScheduler.runAtFixedRate by resolving
             // the scheduler class from the method's return type instead of re-doing reflection each call.
             Class<?> entitySchedulerClass = getSchedulerMethod.getReturnType();
-            if (entitySchedulerClass != null && entitySchedulerClass != void.class) {
+            if (entitySchedulerClass != void.class) {
                 Method executeEntityMethod = getMethod(entitySchedulerClass, "execute",
                         Plugin.class, Runnable.class, Runnable.class, long.class);
                 if (executeEntityMethod != null) {
@@ -352,7 +353,7 @@ public class FoliaAPI {
         // non-Folia synchronous scheduling, attempt to use teleportAsync methods if present
         Method teleportAsyncWithCause = cachedMethods.get("player.teleportAsyncCause");
         if (teleportAsyncWithCause != null) {
-            Object res = invokeMethod(teleportAsyncWithCause, e, location, (TeleportCause) null);
+            Object res = invokeMethod(teleportAsyncWithCause, e, location, null);
             if (res instanceof CompletableFuture) {
                 @SuppressWarnings("unchecked")
                 CompletableFuture<Boolean> f = (CompletableFuture<Boolean>) res;
@@ -409,27 +410,32 @@ public class FoliaAPI {
         return CompletableFuture.completedFuture(true);
     }
 
-    public static CompletableFuture<Boolean> teleportPlayer(Player e, Location location, TeleportCause cause, long delay) {
-        if (e == null) return CompletableFuture.completedFuture(false); // null guard
+    public static void teleportPlayer(Player e, Location location, TeleportCause cause, long delay) {
+        if (e == null) {
+            CompletableFuture.completedFuture(false);
+            return; // null guard
+        }
         final long safeDelay = Math.max(1L, delay); // ensure at least 1 tick for folia entity scheduler
         if (isFolia()) {
             final CompletableFuture<Boolean> out = new CompletableFuture<>();
             runTaskForEntity(e, () -> performTeleportAndComplete(e, location, cause, out), () -> {}, safeDelay);
-            return out;
+            return;
         }
         final CompletableFuture<Boolean> out = new CompletableFuture<>();
-        Runnable task = () -> performTeleportAndComplete(e, location, cause, out); // scheduleable task
+        Runnable task = () -> performTeleportAndComplete(e, location, cause, out); // schedulable task
         bS.runTaskLater(FlamePearls.getInstance(), task, delay); // non-folia uses sync scheduling as before
-        return out;
     }
 
-    public static CompletableFuture<Boolean> teleportPlayer(Player e, Location location, Boolean async, long delay) {
-        if (e == null) return CompletableFuture.completedFuture(false); // null guard
+    public static void teleportPlayer(Player e, Location location, Boolean async, long delay) {
+        if (e == null) {
+            CompletableFuture.completedFuture(false);
+            return; // null guard
+        }
         final long safeDelay = Math.max(1L, delay);
         if (isFolia()) {
             final CompletableFuture<Boolean> out = new CompletableFuture<>();
             runTaskForEntity(e, () -> performTeleportAndComplete(e, location, null, out), () -> {}, safeDelay);
-            return out;
+            return;
         }
         final CompletableFuture<Boolean> out = new CompletableFuture<>();
         Runnable task = () -> performTeleportAndComplete(e, location, null, out);
@@ -438,7 +444,6 @@ public class FoliaAPI {
         } else {
             bS.runTaskLater(FlamePearls.getInstance(), task, delay);
         }
-        return out;
     }
 
     public static void cancelAllTasks() {

@@ -6,14 +6,12 @@ import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 /**
  * A utility for playing sounds in a version-agnostic and efficient manner.
  */
+@SuppressWarnings("unused")
 public final class Sounds {
 
     private Sounds() {
@@ -56,7 +54,7 @@ public final class Sounds {
             return;
         }
         for (Sound sound : sounds) {
-            location.getWorld().playSound(location, sound, volume, pitch);
+            Objects.requireNonNull(location.getWorld()).playSound(location, sound, volume, pitch);
         }
     }
     
@@ -96,7 +94,7 @@ public final class Sounds {
      */
     public static void play(@NotNull Location location, float volume, float pitch, @NotNull String... soundNames) {
         findFirstValid(Arrays.asList(soundNames)).ifPresent(sound ->
-                location.getWorld().playSound(location, sound, volume, pitch)
+                Objects.requireNonNull(location.getWorld()).playSound(location, sound, volume, pitch)
         );
     }
 

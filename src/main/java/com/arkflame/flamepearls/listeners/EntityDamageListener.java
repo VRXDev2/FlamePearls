@@ -11,8 +11,8 @@ import com.arkflame.flamepearls.config.GeneralConfigHolder;
 import com.arkflame.flamepearls.managers.TeleportDataManager;
 
 public class EntityDamageListener implements Listener {
-    private GeneralConfigHolder generalConfigHolder;
-    private TeleportDataManager teleportDataManager;
+    private final GeneralConfigHolder generalConfigHolder;
+    private final TeleportDataManager teleportDataManager;
 
     public EntityDamageListener(TeleportDataManager teleportDataManager, GeneralConfigHolder generalConfigHolder) {
         this.teleportDataManager = teleportDataManager;
@@ -27,7 +27,7 @@ public class EntityDamageListener implements Listener {
         
         Entity entity = event.getEntity();
 
-        if (!(entity instanceof Player)) {
+        if (!(entity instanceof Player player)) {
             return;
         }
 
@@ -36,8 +36,6 @@ public class EntityDamageListener implements Listener {
         if (noDamageTicks <= 0) {
             return;
         }
-
-        Player player = (Player) entity;
 
         if (!teleportDataManager.contains(player)) {
             return;

@@ -17,6 +17,8 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.util.Objects;
+
 /**
  * Main class for the FlamePearls plugin.
  * Handles the plugin's startup, shutdown, and dependency management.
@@ -27,13 +29,13 @@ public class FlamePearls extends JavaPlugin {
     @Getter private static FlamePearls instance;
 
     // Config Holders
-    private GeneralConfigHolder generalConfigHolder = new GeneralConfigHolder();
-    private MessagesConfigHolder messagesConfigHolder = new MessagesConfigHolder();
+    private final GeneralConfigHolder generalConfigHolder = new GeneralConfigHolder();
+    private final MessagesConfigHolder messagesConfigHolder = new MessagesConfigHolder();
 
     // Managers
-    private OriginManager originManager = new OriginManager();
-    private CooldownManager cooldownManager = new CooldownManager();
-    private TeleportDataManager teleportDataManager = new TeleportDataManager();
+    private final OriginManager originManager = new OriginManager();
+    private final CooldownManager cooldownManager = new CooldownManager();
+    private final TeleportDataManager teleportDataManager = new TeleportDataManager();
 
     // Hooks
     private FlamePearlsPlaceholderHook placeholderHook;
@@ -88,10 +90,10 @@ public class FlamePearls extends JavaPlugin {
         pluginManager.registerEvents(new CreatureSpawnListener(generalConfigHolder), this);
         pluginManager.registerEvents(new EntityDamageByEntityListener(generalConfigHolder), this);
         pluginManager.registerEvents(new EntityDamageListener(teleportDataManager, generalConfigHolder), this);
-        pluginManager.registerEvents(new PlayerInteractListener(cooldownManager, messagesConfigHolder, generalConfigHolder), this);
+        pluginManager.registerEvents(new PlayerInteractListener(cooldownManager, generalConfigHolder), this);
         pluginManager.registerEvents(new PlayerJoinListener(), this);
         pluginManager.registerEvents(new PlayerQuitListener(teleportDataManager, cooldownManager), this);
-        pluginManager.registerEvents(new PlayerTeleportListener(originManager, generalConfigHolder), this);
+        pluginManager.registerEvents(new PlayerTeleportListener(generalConfigHolder), this);
         pluginManager.registerEvents(new ProjectileHitListener(teleportDataManager, originManager, generalConfigHolder), this);
         pluginManager.registerEvents(new ProjectileLaunchListener(originManager), this);
     }
@@ -100,7 +102,7 @@ public class FlamePearls extends JavaPlugin {
      * Registers all plugin command executors.
      */
     private void registerCommands() {
-        getCommand("flamepearls")
+        Objects.requireNonNull(getCommand("flamepearls"))
                 .setExecutor(new FlamePearlsCommand(this, generalConfigHolder, originManager, messagesConfigHolder));
     }
 

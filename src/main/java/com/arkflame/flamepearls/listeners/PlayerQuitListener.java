@@ -9,8 +9,8 @@ import com.arkflame.flamepearls.FlamePearls;
 import com.arkflame.flamepearls.managers.CooldownManager;
 
 public class PlayerQuitListener implements Listener {
-    private TeleportDataManager teleportDataManager;
-    private CooldownManager cooldownManager;
+    private final TeleportDataManager teleportDataManager;
+    private final CooldownManager cooldownManager;
 
     public PlayerQuitListener(TeleportDataManager teleportDataManager, CooldownManager cooldownManager) {
         this.teleportDataManager = teleportDataManager;

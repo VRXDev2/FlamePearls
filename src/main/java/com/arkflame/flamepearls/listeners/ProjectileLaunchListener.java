@@ -11,7 +11,7 @@ import org.bukkit.projectiles.ProjectileSource;
 import com.arkflame.flamepearls.managers.OriginManager;
 
 public class ProjectileLaunchListener implements Listener {
-    private OriginManager originManager;
+    private final OriginManager originManager;
     
     public ProjectileLaunchListener(OriginManager originManager) {
         this.originManager = originManager;

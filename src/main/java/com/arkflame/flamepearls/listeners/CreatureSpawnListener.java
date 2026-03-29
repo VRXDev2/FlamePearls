@@ -8,7 +8,7 @@ import org.bukkit.event.entity.CreatureSpawnEvent;
 import com.arkflame.flamepearls.config.GeneralConfigHolder;
 
 public class CreatureSpawnListener implements Listener {
-    private GeneralConfigHolder generalConfigHolder;
+    private final GeneralConfigHolder generalConfigHolder;
     
     public CreatureSpawnListener(GeneralConfigHolder generalConfigHolder) {
         this.generalConfigHolder = generalConfigHolder;

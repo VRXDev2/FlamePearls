@@ -1,20 +1,14 @@
 package com.arkflame.flamepearls.listeners;
 
-import com.arkflame.flamepearls.FlamePearls;
 import com.arkflame.flamepearls.config.GeneralConfigHolder;
-import com.arkflame.flamepearls.managers.OriginManager;
 import com.arkflame.flamepearls.utils.FoliaAPI;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.WorldBorder;
-import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
-import org.bukkit.ChatColor;
 
 /**
  * Instantiates a mirrored approach of PlayerTeleportEvent handling for ender
@@ -25,11 +19,9 @@ import org.bukkit.ChatColor;
  * entity thread.
  */
 public class PlayerTeleportListener implements Listener {
-    private final OriginManager originManager;
     private final GeneralConfigHolder generalConfigHolder;
 
-    public PlayerTeleportListener(OriginManager originManager, GeneralConfigHolder generalConfigHolder) {
-        this.originManager = originManager;
+    public PlayerTeleportListener(GeneralConfigHolder generalConfigHolder) {
         this.generalConfigHolder = generalConfigHolder;
     }
 
@@ -41,8 +33,7 @@ public class PlayerTeleportListener implements Listener {
         }
         if (event.getCause() == TeleportCause.ENDER_PEARL) {
             Location to = event.getTo();
-            Location from = event.getFrom();
-            if (to == null || from == null) {
+            if (to == null) {
                 return;
             }
             World toWorld = to.getWorld();
@@ -56,12 +47,13 @@ public class PlayerTeleportListener implements Listener {
             
             if (generalConfigHolder.isPreventWorldBorderTeleport() && !isInsideWorldBorder(to)) {
                 event.setCancelled(true);
-                return;
             }
         }
     }
 
     private boolean isInsideWorldBorder(Location loc) {
+        if (loc.getWorld() == null) return true;
+
         WorldBorder border = loc.getWorld().getWorldBorder();
         double size = border.getSize() / 2.0;
         double centerX = border.getCenter().getX();

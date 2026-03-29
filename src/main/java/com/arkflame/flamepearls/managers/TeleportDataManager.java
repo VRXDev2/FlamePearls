@@ -7,7 +7,7 @@ import java.util.Map;
 import java.util.UUID;
 
 public class TeleportDataManager {
-    private Map<UUID, Long> users = new HashMap<>();
+    private final Map<UUID, Long> users = new HashMap<>();
 
     public void add(UUID uuid) {
         users.put(uuid, System.currentTimeMillis());

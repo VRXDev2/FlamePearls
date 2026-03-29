@@ -6,12 +6,12 @@ import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 
+import java.util.Objects;
+
+@SuppressWarnings("unused")
 public class LocationUtil {
     public static boolean isSafe(Block block) {
         Material type = block.getType();
-        if (type == null) {
-            return true;
-        }
 
         String typeName = type.name();
         return type == Material.AIR ||
@@ -37,7 +37,7 @@ public class LocationUtil {
     }
 
     public static Block getBlockAt(Location location) {
-        return location.getWorld().getBlockAt(location.getBlockX(), location.getBlockY(), location.getBlockZ());
+        return Objects.requireNonNull(location.getWorld()).getBlockAt(location.getBlockX(), location.getBlockY(), location.getBlockZ());
     }
 
     public static boolean isSafe(Location location) {
@@ -76,7 +76,8 @@ public class LocationUtil {
         }
     }
 
-    private static Location findSafeXYZ(Player player, Location pearlLocation, Location origin, World world) {
+    @SuppressWarnings("DataFlowIssue")
+    private static Location findSafeXYZ(Location pearlLocation, Location origin) {
         Location pearlBlockLocation = pearlLocation.getBlock().getLocation().add(0.5, 0, 0.5);
         if (isSafe(pearlBlockLocation)) {
             return pearlBlockLocation;
@@ -122,9 +123,9 @@ public class LocationUtil {
         return bestLocation;
     }
 
-    public static Location findSafeLocation(Player player, Location location, Location origin, World world) {
+    public static Location findSafeLocation(Location location, Location origin) {
         Location testLocation = location.clone();
-        testLocation = findSafeXYZ(player, testLocation, origin, world);
+        testLocation = findSafeXYZ(testLocation, origin);
         // Location changed, apply safe location
         if (!testLocation.equals(location)) {
             return testLocation;

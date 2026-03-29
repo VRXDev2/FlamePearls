@@ -70,7 +70,7 @@ public class GeneralConfigHolder {
 
         disabledWorlds = new HashSet<>(config.getStringList(DISABLED_WORLDS_PATH));
 
-        pearlSounds = loadSounds(config, PEARL_SOUND_PATH);
+        pearlSounds = loadSounds(config);
 
         // Load max ticks alive and whether the feature is enabled.
         maxTicksAlive = config.getInt(MAX_TICKS_ALIVE_PATH, 1200);
@@ -86,13 +86,13 @@ public class GeneralConfigHolder {
         resetVelocityAfterTeleport = config.getBoolean("reset-velocity-after-teleport", true);
     }
 
-    private List<Sound> loadSounds(@NotNull Configuration config, @NotNull String path) {
+    private List<Sound> loadSounds(@NotNull Configuration config) {
         List<String> soundNames;
 
-        if (config.isString(path)) {
-            soundNames = Collections.singletonList(config.getString(path));
-        } else if (config.isList(path)) {
-            soundNames = config.getStringList(path);
+        if (config.isString(GeneralConfigHolder.PEARL_SOUND_PATH)) {
+            soundNames = Collections.singletonList(config.getString(GeneralConfigHolder.PEARL_SOUND_PATH));
+        } else if (config.isList(GeneralConfigHolder.PEARL_SOUND_PATH)) {
+            soundNames = config.getStringList(GeneralConfigHolder.PEARL_SOUND_PATH);
         } else {
             return Collections.emptyList();
         }
@@ -105,7 +105,7 @@ public class GeneralConfigHolder {
                     try {
                         return Optional.of(Sound.valueOf(name.toUpperCase(Locale.ROOT)));
                     } catch (IllegalArgumentException e) {
-                        logger.warning("Invalid sound name in config.yml at path '" + path + "': " + name);
+                        logger.warning("Invalid sound name in config.yml at path '" + GeneralConfigHolder.PEARL_SOUND_PATH + "': " + name);
                         return Optional.<Sound>empty();
                     }
                 })
