@@ -13,7 +13,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.PlayerInventory;
 
 import java.text.DecimalFormat;
 
@@ -47,12 +46,10 @@ public class PlayerInteractListener implements Listener {
             return;
         }
 
-        final PlayerInventory inventory = player.getInventory();
         if (action == Action.RIGHT_CLICK_BLOCK) {
             if (generalConfigHolder.isPreventPearlOnClickBlock()) {
                 event.setCancelled(true);
                 event.setUseItemInHand(Event.Result.DENY);
-                inventory.setItem(inventory.getHeldItemSlot(), heldItem);
                 return;
             }
 
@@ -69,7 +66,6 @@ public class PlayerInteractListener implements Listener {
             final String cooldownSeconds = decimalFormat.format(cooldown);
             event.setCancelled(true);
             event.setUseItemInHand(Event.Result.DENY);
-            inventory.setItem(inventory.getHeldItemSlot(), heldItem);
             MessageUtil.sendMessage(player, messagesConfigHolder.getMessage("cooldown")
                     .replace("{time}", cooldownSeconds));
             return;
